@@ -7,6 +7,7 @@
 #endif
 
 #ifdef FOR_DSP
+  #include <csl.h>
 #endif
 
 
