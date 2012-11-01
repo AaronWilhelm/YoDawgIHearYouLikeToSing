@@ -1,5 +1,5 @@
 CC=gcc
 DEFINED_SYMBOLS=-DFOR_PC
-LIBS=-lsndfile
+LIBS=-lsndfile -lm
 INC_DIRS=
 CFLAGS=$(DEFINED_SYMBOLS) $(LIBS) $(INC_DIRS) -Wall
