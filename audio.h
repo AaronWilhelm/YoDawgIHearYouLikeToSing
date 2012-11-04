@@ -1,6 +1,8 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+#define SAMPLE_RATE 44100
+
 #ifdef FOR_PC
   #include <sndfile.h>
   #include <stdio.h>
@@ -20,12 +22,17 @@ struct audio_in_t
 };
 #endif
 
+static float notes [27] = {65.41, 73.42, 82.41, 87.31, 98, 110, 123.47, 130.81, 146.83, 164.81, 
+	174.61, 196, 220, 246.94, 261.63, 293.66, 329.63, 349.23, 392, 440, 493.88,
+	523.25, 587.33, 659.26, 698.46, 783.99, 880};
+
 #ifdef FOR_DSP
 struct audio_in_t
 {
 };
 #endif
 
+float max_peak(float* fft_data, int length);
 
 void init_audio_in(struct audio_in_t*);
 void close_audio_in(struct audio_in_t*);

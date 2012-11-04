@@ -31,3 +31,25 @@ int fill_in_buffer(struct audio_in_t* in, int * buffer, int size)
 void close_audio_in(struct audio_in_t* in) {} // Do nothing
 
 #endif /* FOR_DSP */
+
+float max_peak(float* fft_data, int length)
+{
+	float peak = 0;
+	int index;
+	int i;
+	//assuming the fftw style data, we ignore the negative frequency area
+ 	//which is the second half of the fft data
+	for(i = 0; i < length/2; i++)
+	{
+		if(fft_data[i] > peak)
+		{
+			index = i;
+			peak = fft_data[i];
+		}
+	}
+
+	//calculate the frequency from the index of the highest peak
+	return (float)index * (SAMPLE_RATE / (float)length);
+} 
+
+	
