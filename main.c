@@ -13,15 +13,18 @@
 
 int main()
 {
-    struct audio_in_t a_input;
+    struct audio_in_t  a_input;
+    struct audio_out_t a_output;
     int input_buffer[IN_BUFF_SIZE];
   
     //Initialize Sound
 #ifdef FOR_PC
     a_input.file_name = "test_in.wav";
+    a_output.file_name = "test_out.wav";
 #endif
 
     init_audio_in(&a_input);
+    init_audio_out(&a_output);
 
     //Initialize FFT stuff
 
@@ -30,8 +33,11 @@ int main()
                          input_buffer,
                          arraysize(input_buffer)))
     {
-    
+
     }
+
+    close_audio_in(&a_input);
+    close_audio_out(&a_output);
 
     return 0;
 }
