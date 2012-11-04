@@ -13,7 +13,8 @@
 
 int main()
 {
-    struct audio_in_t a_input;
+    struct audio_in_t  a_input;
+    struct audio_out_t a_output;
     int input_buffer[IN_BUFF_SIZE];
   
     //Initialize Sound
@@ -32,6 +33,9 @@ int main()
     {
     
     }
+
+    close_audio_in(&a_input);
+    close_audio_out(&a_ouput);
 
     return 0;
 }
