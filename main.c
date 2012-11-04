@@ -1,6 +1,6 @@
 #ifdef FOR_PC
   #include <stdio.h>
-#elsif FOR_DSP
+#elif FOR_DSP
 
 #else
   #error "Not a supported platform"
@@ -18,7 +18,7 @@ int main()
   
     //Initialize Sound
 #ifdef FOR_PC
-    audio_in_t.file_name = "test_in.wav";
+    a_input.file_name = "test_in.wav";
 #endif
 
     init_audio_in(&a_input);
