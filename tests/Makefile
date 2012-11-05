@@ -1,12 +1,12 @@
 OUTPUTS= audio \
          fft
 
-TARGET=PC
+PLATFORM=PC
 include ../pc.mk
 
-.phony: clean $(OUTPUTS)
+.phony: clean
 
-all: fft #$(OUTPUTS)
+all: $(OUTPUTS)
 
 audio: test_audio.c ../audio.h ../audio.c
 	$(CC) $(CFLAGS) test_audio.c ../audio.c -o $@
