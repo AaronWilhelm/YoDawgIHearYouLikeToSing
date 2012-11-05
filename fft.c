@@ -31,17 +31,16 @@ void fft_c(int n, struct complex_t *x, struct complex_t *W)
                 temp.real = x[i].real + x[i+len].real;
                 temp.imag = x[i].imag + x[i+len].imag;
                 tm.real = x[i].real - x[i+len].real;
-                tm.imag = x[i].imag - x[i+len].imag;             
+                tm.imag = x[i].imag - x[i+len].imag;
                 x[i+len].real = tm.real*u.real - tm.imag*u.imag;
                 x[i+len].imag = tm.real*u.imag + tm.imag*u.real;
                 x[i] = temp;
-                
             }
             Wptr = Wptr + Windex;
         }
         Windex = 2*Windex;
     }
-	
+
 	/* rearrange data by bit reversing */
 	j = 0;
 	for (i = 1; i < (n-1); i++) {
@@ -65,14 +64,37 @@ void fft(struct fft_desc_t * desc, struct complex_t * data)
   fft_c(desc->size, data, desc->W);
 }
 
-void init_fft_desc(struct fft_desc_t * desc, int n)
+void init_fft_desc(struct fft_desc_t * desc, int n, enum FFT_Direction dir)
 {
     int i;
 
-	float a = 2.0*PI/n;
+    desc->size = n;
 
-    for(i = 0 ; i < n ; i++) {
-        desc->W[i].real = (float) cos(-i*a);
-        desc->W[i].imag = (float) sin(-i*a);
+	float a = 2.0*PI/n;
+    float coeff;
+
+    switch(dir)
+    {
+        case FFT_FORWARD:
+            coeff = -1.0;
+            break;
+        case FFT_BACKWARD:
+            coeff = 1.0;
+            break;
+        default:
+            //TODO: Throw error
+            break;
     }
+
+    for(i = 0 ; i < n ; i++)
+    {
+      desc->W[i].real = (float) cos(coeff*i*a);
+      desc->W[i].imag = (float) sin(coeff*i*a);
+    }
+
+}
+
+void fft_execute(struct fft_desc_t * desc, struct complex_t * signal)
+{
+    fft_c(desc->size, signal, desc->W);
 }
