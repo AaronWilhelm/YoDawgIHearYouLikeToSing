@@ -1,4 +1,5 @@
 #include "audio.h"
+#include "global.h"
 
 #ifdef FOR_PC
 #include <stdlib.h>
