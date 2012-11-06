@@ -27,6 +27,11 @@ struct audio_out_t
 };
 #endif
 
+typedef struct
+{
+    int numerator; //new frequency
+    int denominator; //old frequency
+} freq_ratio;
 
 #ifdef FOR_DSP
 struct audio_in_t
@@ -35,6 +40,7 @@ struct audio_in_t
 #endif
 
 float max_peak(float* fft_data, int length);
+freq_ratio find_ratio(float current_freq);
 
 void init_audio_in(struct audio_in_t*);
 void close_audio_in(struct audio_in_t*);

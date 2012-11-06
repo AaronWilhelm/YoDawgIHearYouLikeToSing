@@ -5,7 +5,7 @@ C_FILES= main.c \
          audio.c
 
 H_FILES= fft.h \
-         audio.c
+         audio.h
 
 OBJS = ${C_FILES:.c=.o}
 

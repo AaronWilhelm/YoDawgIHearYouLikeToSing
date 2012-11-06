@@ -84,6 +84,50 @@ float max_peak(float* fft_data, int length)
 
 	//calculate the frequency from the index of the highest peak
 	return (float)index * (SAMPLE_RATE / (float)length);
-} 
+}
+
+freq_ratio find_ratio(float current_freq)
+{
+    int index = NOTE_ARRAY_LENGTH - 1;
+    int index_counter = (NOTE_ARRAY_LENGTH - 1) / 2;
+    freq_ratio ratio;
+    bool done = false;
+    
+    ratio.denominator = current_freq;
+    while (!done)
+    {
+        //check to see if we are at the right frequency
+        if( current_freq <= notes[index] && current_freq >= notes[index - 1])
+        {
+            done = true;
+            break;
+        }
+        //if not, figure out whether to go higher or lower using binary search
+        if ( current_freq > notes[index])
+        {
+            index += index_counter;
+        } else
+        {
+            index -= index_counter;
+        }
+        //keep adding or subtracting diminishing powers of 2. 
+        index_counter /= 2;
+        //to prevent from accessing the nonexistant -1 element. 
+        if( index == 1)
+        {
+            done = true;
+            break;
+        }
+    }
+    
+    //we've now found a pitch probably between two accepted pitches so we
+    //have to figure out which it is closer to
+    if( current_freq > notes[index] - ((notes[index] - notes[index -1])/2))
+        ratio.numerator = notes[index];
+    else
+        ratio.numerator = notes[index - 1];
+    
+    return ratio;
+}
 
 	
