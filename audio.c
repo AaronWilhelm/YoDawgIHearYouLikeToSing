@@ -92,7 +92,7 @@ freq_ratio find_ratio(float current_freq)
     int index = NOTE_ARRAY_LENGTH - 1;
     int index_counter = (NOTE_ARRAY_LENGTH - 1) / 2;
     freq_ratio ratio;
-    bool done = false;
+    int done = 0;
     
     ratio.denominator = current_freq;
     while (!done)
@@ -100,7 +100,7 @@ freq_ratio find_ratio(float current_freq)
         //check to see if we are at the right frequency
         if( current_freq <= notes[index] && current_freq >= notes[index - 1])
         {
-            done = true;
+            done = 1;
             break;
         }
         //if not, figure out whether to go higher or lower using binary search
@@ -116,7 +116,7 @@ freq_ratio find_ratio(float current_freq)
         //to prevent from accessing the nonexistant -1 element. 
         if( index == 1)
         {
-            done = true;
+            done = 1;
             break;
         }
     }
