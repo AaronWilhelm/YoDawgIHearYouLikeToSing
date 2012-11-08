@@ -39,8 +39,14 @@ struct audio_in_t
 };
 #endif
 
-float max_peak(float* fft_data, int length);
+float max_peak(struct complex_t* fft_data, int length);
 freq_ratio find_ratio(float current_freq);
+
+int upsample(float* o_data, float* n_data, int factor);
+int downsample(float* o_data, float* n_data, int factor);
+
+int upsample_c(struct complex_t* o_data, struct complex_t* n_data, int factor);
+int downsample_c(struct complex_t* o_data, struct complex_t* n_data, int factor);
 
 void init_audio_in(struct audio_in_t*);
 void close_audio_in(struct audio_in_t*);
