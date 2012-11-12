@@ -2,10 +2,12 @@ TARGET=auto_tuner
 PLATFORM:= PC
 C_FILES= main.c \
          fft.c  \
-         audio.c
+         audio.c \
+         pvoc.c
 
 H_FILES= fft.h \
-         audio.h
+         audio.h \
+         pvoc.h
 
 OBJS = ${C_FILES:.c=.o}
 
