@@ -1,8 +1,8 @@
 #ifndef PVOC_H
 #define PVOC_H
 
-#include <global.h>
-#include <fft.h>
+#include "global.h"
+#include "fft.h"
 
 // Phase vocoder phase shifter type
 struct pvoc_ps_t
