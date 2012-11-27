@@ -24,8 +24,15 @@ void close_audio_in(struct audio_in_t* in)
 
 int fill_in_buffer(struct audio_in_t* in, int * buffer, int size)
 {
+    int i;
     sf_count_t out;
     out = sf_read_int(in->sf, buffer, (sf_count_t) size);
+
+    for(i = out; i < size; ++i)
+    {
+        buffer[i] = 0;
+    }
+
     return (out == (sf_count_t) size);
 }
 
