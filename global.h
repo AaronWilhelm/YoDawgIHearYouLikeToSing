@@ -7,6 +7,7 @@
 #define PI 3.14159265358979323846
 #define SAMPLE_RATE 44100
 #define NOTE_ARRAY_LENGTH 33
+#define VOICE
 
 struct complex_t
 {

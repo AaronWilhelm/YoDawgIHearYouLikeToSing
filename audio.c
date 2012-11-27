@@ -79,12 +79,12 @@ float max_peak(struct complex_t* fft_data, int length)
 	float peak = 0;
 	int index;
 	int i;
-    float sample;
+	float sample;
 	//assuming the fftw style data, we ignore the negative frequency area
  	//which is the second half of the fft data
 	for(i = 0; i < length/2 +1; i++)
 	{
-        sample = (fft_data[i].real * fft_data[i].real) + (fft_data[i].imag * fft_data[i].imag);
+        	sample = (fft_data[i].real * fft_data[i].real) + (fft_data[i].imag * fft_data[i].imag);
 		if(sample > peak)
 		{
 			index = i;
@@ -102,8 +102,10 @@ freq_ratio find_ratio(float current_freq)
     int index_counter = (NOTE_ARRAY_LENGTH - 1) / 2;
     freq_ratio ratio;
     int done = 0;
+#ifdef VOICE
     current_freq /= 7; //assuming given max peak and finding ratio for voice signals. 
-    
+#endif    
+
     ratio.denominator = current_freq;
     while (!done)
     {
