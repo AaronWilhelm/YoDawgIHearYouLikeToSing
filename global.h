@@ -9,6 +9,7 @@
 #define SAMPLE_RATE 44100
 #define NOTE_ARRAY_LENGTH 33
 #define VOICE
+#define OV_SAMP_FACT 4
 
 struct complex_t
 {

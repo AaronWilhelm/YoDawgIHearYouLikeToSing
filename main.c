@@ -91,7 +91,7 @@ int main()
     pvoc.fft_desc   = &fft_desc;
     pvoc.ifft_desc  = &ifft_desc;
 
-    init_pvoc_ps(&pvoc, IN_BUFF_SIZE, 1, SAMPLE_RATE);
+    init_pvoc_ps(&pvoc, IN_BUFF_SIZE, OV_SAMP_FACT, SAMPLE_RATE);
 
     // Initialize input and output circular buffers
     for(i = 0; i < input_c_buff.size; ++i)
