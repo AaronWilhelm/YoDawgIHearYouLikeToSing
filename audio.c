@@ -70,23 +70,33 @@ void close_audio_out(struct audio_out_t* out) {} // Do nothing
 float max_peak(struct complex_t* fft_data, int length)
 {
 	float peak = 0;
-	int index;
+	int index = 1;
 	int i;
 	float sample;
+    //printf("starting pitch detect \n");
+    fflush(stdout);
 	//assuming the fftw style data, we ignore the negative frequency area
  	//which is the second half of the fft data
-	for(i = 0; i < length/2 +1; i++)
+	for(i = 1; i < length/2 +1; i++)
 	{
-        	sample = (fft_data[i].real * fft_data[i].real) + (fft_data[i].imag * fft_data[i].imag);
+        //printf("real: %f    imag: %f\n",fft_data[i].real,fft_data[i].imag);
+        sample = (fft_data[i].real * fft_data[i].real) + (fft_data[i].imag * fft_data[i].imag);
+        //printf("the current sample is %f\n",sample);
+        fflush(stdout);
 		if(sample > peak)
 		{
 			index = i;
 			peak = sample;
 		}
 	}
-
+    //printf("the index of the maximum peak is %d \n",index);
+    fflush(stdout);
 	//calculate the frequency from the index of the highest peak
-	return (float)index * (SAMPLE_RATE / (float)length);
+   // printf("the frequency is %f    ",(float)index * (SAMPLE_RATE * (((float)(length - 2))/((float)length*(float)length))));
+#ifdef DEBUG_OUTPUT
+    printf("the index is %d    the frequency is %f    ",index,(float)index*(SAMPLE_RATE/((float)length)));
+#endif
+    return (float)index * (SAMPLE_RATE * (((float)(length - 2))/((float)length*(float)length)));
 }
 
 float find_ratio(float current_freq)
@@ -98,7 +108,8 @@ float find_ratio(float current_freq)
 #ifdef VOICE
     current_freq /= 7; //assuming given max peak and finding ratio for voice signals. 
 #endif    
-
+    //printf("frequency %f \n", current_freq);
+    fflush(stdout);
     ratio.denominator = current_freq;
     while (!done)
     {
@@ -125,6 +136,7 @@ float find_ratio(float current_freq)
             break;
         }
     }
+    //printf("yay! done with one loop");
     
     //we've now found a pitch probably between two accepted pitches so we
     //have to figure out which it is closer to
@@ -132,8 +144,16 @@ float find_ratio(float current_freq)
         ratio.numerator = notes[index];
     else
         ratio.numerator = notes[index - 1];
-    
-    return ratio.numerator / ratio.denominator;
+#ifdef DEBUG_OUTPUT
+    printf("new frequency %f   original frequency %f  ", ratio.numerator, ratio.denominator);
+    printf("ratio %f \n",(float)ratio.numerator / (float)ratio.denominator);
+#endif
+    fflush(stdout);
+#ifdef DOUBLE_PITCH
+    return ((float)ratio.numerator / (float)ratio.denominator)*2;
+#else
+    return (float)ratio.numerator / (float)ratio.denominator;
+#endif
 }
 
 int upsample(float* o_data, float* n_data, int factor)

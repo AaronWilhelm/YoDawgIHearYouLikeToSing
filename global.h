@@ -7,8 +7,9 @@
 #define PI 3.14159265358979323846
 #define SAMPLE_RATE 44100
 #define NOTE_ARRAY_LENGTH 33
-#define VOICE
-
+#define DEBUG_OUTPUT
+//#define VOICE
+//#define DOUBLE_PITCH
 struct complex_t
 {
     float real;

@@ -29,8 +29,8 @@ struct audio_out_t
 
 typedef struct
 {
-    int numerator; //new frequency
-    int denominator; //old frequency
+    float numerator; //new frequency
+    float denominator; //old frequency
 } freq_ratio;
 
 #ifdef FOR_DSP
