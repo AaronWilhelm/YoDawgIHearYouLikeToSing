@@ -5,6 +5,7 @@
 #include <global.h>
 #include <fft.h>
 #include <audio.h>
+#include <math.h>
 #include "pvoc.h"
 
 struct fft_desc_t * create_fft_desc(int size, enum FFT_Direction dir)
@@ -79,6 +80,7 @@ void pvoc_entire_buffer(struct pvoc_ps_t * pv,
                      * fft_data;
 
     fft_desc = create_fft_desc(pv->frame_size, FFT_FORWARD);
+    float max;
     memset(out, 0, size * sizeof(struct complex_t));
     tmp_in = (struct complex_t *)malloc(sizeof(struct complex_t) *
                                         (size_t) pv->frame_size);
@@ -129,6 +131,21 @@ void pvoc_entire_buffer(struct pvoc_ps_t * pv,
     free(tmp_out);
     free(fft_data);
     destroy_fft_desc(fft_desc);
+
+    max = 0.0;
+    for( i = 0; i < size; ++i)
+    {
+        if( fabs(out[i].real) > max )
+            max = fabs(out[i].real);
+    }
+
+    if( max > 0.0 )
+    {
+        for( i = 0; i < size; ++i)
+        {
+            out[i].real /= max;
+        }
+    }
 }
 
 void print_help()
@@ -209,7 +226,7 @@ int main(int argc, char *argv[])
         orig_signal[i].imag = 0;
     }
           
-    pvoc = create_pvoc(2048, 4, (float) info_in.samplerate);
+    pvoc = create_pvoc(256, 4, (float) info_in.samplerate);
 
     pvoc_entire_buffer(pvoc,
                        orig_signal,
