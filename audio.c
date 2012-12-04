@@ -89,7 +89,7 @@ float max_peak(struct complex_t* fft_data, int length)
 	return (float)index * (SAMPLE_RATE / (float)length);
 }
 
-freq_ratio find_ratio(float current_freq)
+float find_ratio(float current_freq)
 {
     int index = NOTE_ARRAY_LENGTH - 1;
     int index_counter = (NOTE_ARRAY_LENGTH - 1) / 2;
@@ -133,7 +133,7 @@ freq_ratio find_ratio(float current_freq)
     else
         ratio.numerator = notes[index - 1];
     
-    return ratio;
+    return ratio.numerator / ratio.denominator;
 }
 
 int upsample(float* o_data, float* n_data, int factor)
