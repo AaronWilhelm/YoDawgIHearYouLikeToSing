@@ -35,7 +35,7 @@ void init_pvoc_ps(struct pvoc_ps_t * pv,
                   float sample_rate);
 
 void pvoc_ps_single_buffer(struct pvoc_ps_t * pv,
-                           struct complex_t * in,
+                           float            * in,
                            struct complex_t * out, 
                            float pitch_shift);
 

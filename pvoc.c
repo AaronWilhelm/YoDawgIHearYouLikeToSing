@@ -54,7 +54,7 @@ void init_pvoc_ps(struct pvoc_ps_t * pv,
  * param : size - size of the fft window
  ************************************************/
 void pvoc_ps_single_buffer(struct pvoc_ps_t * pv,
-                           struct complex_t * in_sig,
+                           float            * in_sig,
                            struct complex_t * out_sig,
                            float pitch_shift)
 {
@@ -64,7 +64,7 @@ void pvoc_ps_single_buffer(struct pvoc_ps_t * pv,
     // Window data and copy to temp array
     for(i = 0; i < pv->frame_size; ++i)
     {
-        pv->tmp_wksp[i].real = in_sig[i].real * pv->window[i];
+        pv->tmp_wksp[i].real = in_sig[i] * pv->window[i];
         pv->tmp_wksp[i].imag = 0;
     }
 

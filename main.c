@@ -27,21 +27,31 @@ float pvoc_sum_phase[IN_BUFF_SIZE/2 + 1];
 
 /* ~~~~~~~~~~~~~~~ CIRC BUFF ~~~~~~~~~~~~~~~~~~ */
 float in_c_buff_space[IN_CIRC_BUFF_SIZE];
-float out_c_buff_space[IN_CIRC_BUFF_SIZE];
 
+float out_c_buff[IN_CIRC_BUFF_SIZE];
+float copy_in_buff[IN_BUFF_SIZE];
+struct complex_t tmp_out_buff[IN_BUFF_SIZE];
 
 int push_audio_in_samp(struct audio_in_t * a_input, 
                        struct c_buff_f32 * input_c_buff)
 {
-    int ret, sample_i;
+    int ret, sample_i, out_idx;
     ret = fill_in_buffer(a_input, &sample_i, 1);
-    push_new_f32(input_c_buff, (float) sample_i);
+    push_new_f32(input_c_buff, (float) sample_i/((float)INT32_MAX*50.0));
     return ret;
+}
+
+void dummy_pvoc(struct pvoc_ps_t *pv, float* buff2use, struct complex_t *tmp_out_buff)
+{
+    int i;
+    for(i = 0; i < pv->frame_size; ++i)
+      tmp_out_buff[i].real = buff2use[i];
 }
 
 int main()
 {
-    int i, samp_num;
+    int latency;
+    int i, samp_num, out_idx;
     struct audio_in_t  a_input;
     struct audio_out_t a_output;
 
@@ -60,15 +70,8 @@ int main()
     struct c_buff_f32 input_c_buff = {
         in_c_buff_space,
         IN_CIRC_BUFF_SIZE,
-        0
+        IN_CIRC_BUFF_SIZE - 1,
     };
-    
-    struct c_buff_f32 output_c_buff = {
-        out_c_buff_space,
-        IN_CIRC_BUFF_SIZE,
-        0
-    };
-
 
     //Initialize Sound
 #ifdef FOR_PC
@@ -91,27 +94,100 @@ int main()
     pvoc.fft_desc   = &fft_desc;
     pvoc.ifft_desc  = &ifft_desc;
 
-    init_pvoc_ps(&pvoc, IN_BUFF_SIZE, OV_SAMP_FACT, SAMPLE_RATE);
+//    init_pvoc_ps(&pvoc, IN_BUFF_SIZE, OV_SAMP_FACT, SAMPLE_RATE);
+    init_pvoc_ps(&pvoc, IN_BUFF_SIZE, OV_SAMP_FACT, (float)(SAMPLE_RATE));
 
     // Initialize input and output circular buffers
     for(i = 0; i < input_c_buff.size; ++i)
     {
         input_c_buff.data[i]  = 0.0;
-        output_c_buff.data[i] = 0.0;
+        out_c_buff[i] = 0.0;
     }
 
+/* printf("\n%d\n", pvoc.over_samp_fact); */
+/* printf("adfdf\n"); */
+/* exit(1); */
     samp_num = 0;
     //'Main' Processing loop
     while( push_audio_in_samp(&a_input, &input_c_buff) )
     {
-        // XXX: Write audio out
+        int latest_idx = input_c_buff.position;
+
+        if( latest_idx + 1 < input_c_buff.size )
+        {
+//printf("zero idx = %d\n",latest_idx+1);
+            out_c_buff[latest_idx+1] = 0.0;
+        }
+        else
+        {
+//printf("zero idx = 0\n");
+            out_c_buff[0] = 0.0;
+        }
 
         if( samp_num == pvoc.step_size - 1)
         {
-            // XXX: Run PVOC
+            float * buff2use;
+            int begin_idx, end_idx, k, b_idx;
+
+            samp_num = 0;
+            // Auto-tune time
+            begin_idx = latest_idx - pvoc.frame_size + 1;
+            if( begin_idx < 0 )
+                begin_idx += input_c_buff.size;
+
+printf("begin_idx = %d, end_idx = %d\n", begin_idx, latest_idx);
+
+            if( begin_idx < end_idx && 0 )
+            {
+                /* buff2use =  */
+            }
+            else
+            {
+                for(k = 0, b_idx = begin_idx;
+                    k < pvoc.frame_size && b_idx < input_c_buff.size;
+                    ++k, ++b_idx)
+                {
+                    copy_in_buff[k] = input_c_buff.data[b_idx];
+                }
+printf("b_idx = %d,  input_c_buff.pos = %d\n", b_idx, input_c_buff.position);
+                for(b_idx = 0; k < pvoc.frame_size; ++k, ++b_idx)
+                {
+                    copy_in_buff[k] = input_c_buff.data[b_idx];
+                }
+printf("b_idx = %d,  input_c_buff.pos = %d, k = %d\n", b_idx, input_c_buff.position, k);
+                buff2use = copy_in_buff;
+            }
+
+            pvoc_ps_single_buffer(&pvoc, buff2use, tmp_out_buff, 1.0);
+            /* dummy_pvoc(&pvoc, buff2use, tmp_out_buff); */
+
+            for(k = 0, b_idx = begin_idx;
+                k < pvoc.frame_size && b_idx < input_c_buff.size;
+                ++k, ++b_idx)
+            {
+printf("K = %d   val = %f, b_idx = %d\n", k, tmp_out_buff[k].real,b_idx);
+                out_c_buff[b_idx] += tmp_out_buff[k].real;
+            }
+
+            for(b_idx = 0; k < pvoc.frame_size; ++k, ++b_idx)
+            {
+printf("K = %d   val = %f, b_idx = %d\n", k, tmp_out_buff[k].real,b_idx);
+                out_c_buff[b_idx] += tmp_out_buff[k].real;
+            }
+
+        }
+        else
+        {
+           ++samp_num;
         }
 
-        samp_num = (samp_num + 1) % pvoc.step_size;
+        latest_idx = latest_idx - pvoc.frame_size;
+
+        if( latest_idx < 0 )
+            latest_idx += input_c_buff.size;
+
+        write_audio_buffer_float(&a_output, out_c_buff + latest_idx, 1);
+printf("written: %f, index: %d\n", *(out_c_buff + latest_idx), latest_idx);
     }
 
     close_audio_in(&a_input);

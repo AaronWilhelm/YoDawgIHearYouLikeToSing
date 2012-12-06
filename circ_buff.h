@@ -23,13 +23,13 @@ struct c_buff_f32
  *********************************************/
 inline void push_new_f32(struct c_buff_f32 *buff, float sample)
 {
-    if( buff->position == 0 )
+  if( buff->position == buff->size - 1)
     {
-        buff->position = buff->size - 1;
+        buff->position = 0;
     }
     else
     {
-        buff->position -= 1;
+        buff->position += 1;
 	}
 	buff->data[buff->position] = sample;
 }

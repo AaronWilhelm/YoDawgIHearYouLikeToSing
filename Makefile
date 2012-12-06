@@ -5,9 +5,11 @@ C_FILES= main.c \
          audio.c \
          pvoc.c
 
-H_FILES= fft.h \
+H_FILES= fft.h  \
          audio.h \
-         pvoc.h
+         pvoc.h   \
+         global.h  \
+         circ_buff.h
 
 OBJS = ${C_FILES:.c=.o}
 
@@ -26,7 +28,7 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) $(CFLAGS) -o $@
 
-%.o: %.c
+%.o: %.c $(H_FILES)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:

@@ -3,13 +3,14 @@
 
 #define arraysize(a) (sizeof(a)/sizeof(a[0]))
 
-#define IN_BUFF_SIZE 128
-#define IN_CIRC_BUFF_SIZE  512
+#define IN_BUFF_SIZE 32
+#define IN_CIRC_BUFF_SIZE  1000
 #define PI 3.14159265358979323846
 #define SAMPLE_RATE 44100
 #define NOTE_ARRAY_LENGTH 33
 #define VOICE
-#define OV_SAMP_FACT 4
+#define OV_SAMP_FACT 2
+
 
 struct complex_t
 {
