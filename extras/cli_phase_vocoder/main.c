@@ -4,6 +4,8 @@
 #include <string.h>
 #include <global.h>
 #include <fft.h>
+#include <audio.h>
+#include <math.h>
 #include "pvoc.h"
 
 struct fft_desc_t * create_fft_desc(int size, enum FFT_Direction dir)
@@ -71,16 +73,22 @@ void pvoc_entire_buffer(struct pvoc_ps_t * pv,
                         float scale,
                         size_t size)
 {
+    struct fft_desc_t * fft_desc;
     int i, base_idx, in_latency;
     struct complex_t * tmp_in,
-                     * tmp_out;
+                     * tmp_out,
+                     * fft_data;
 
+    fft_desc = create_fft_desc(pv->frame_size, FFT_FORWARD);
+    float max;
     memset(out, 0, size * sizeof(struct complex_t));
     tmp_in = (struct complex_t *)malloc(sizeof(struct complex_t) *
                                         (size_t) pv->frame_size);
 
     tmp_out = (struct complex_t *)malloc(sizeof(struct complex_t) *
                                          (size_t) pv->frame_size);
+    fft_data = (struct complex_t *)malloc(sizeof(struct complex_t) *
+                               (size_t) pv->frame_size);
 
     in_latency = pv->frame_size - pv->step_size;
 
@@ -100,6 +108,12 @@ void pvoc_entire_buffer(struct pvoc_ps_t * pv,
             }
             tmp_in[i].imag = 0;
         }
+        memcpy(fft_data, tmp_in, sizeof(struct complex_t)
+               * (size_t)pv->frame_size);
+        fft_execute(fft_desc, fft_data);
+        
+        scale = find_ratio(max_peak(fft_data,pv->frame_size));
+        
         pvoc_ps_single_buffer(pv, tmp_in, tmp_out, scale);
 
         for(i = 0; i < pv->frame_size; ++i)
@@ -115,6 +129,23 @@ void pvoc_entire_buffer(struct pvoc_ps_t * pv,
     }
     free(tmp_in);
     free(tmp_out);
+    free(fft_data);
+    destroy_fft_desc(fft_desc);
+
+    max = 0.0;
+    for( i = 0; i < size; ++i)
+    {
+        if( fabs(out[i].real) > max )
+            max = fabs(out[i].real);
+    }
+
+    if( max > 0.0 )
+    {
+        for( i = 0; i < size; ++i)
+        {
+            out[i].real /= max;
+        }
+    }
 }
 
 void print_help()
@@ -195,7 +226,7 @@ int main(int argc, char *argv[])
         orig_signal[i].imag = 0;
     }
           
-    pvoc = create_pvoc(32, 4, (float) info_in.samplerate);
+    pvoc = create_pvoc(256, 4, (float) info_in.samplerate);
 
     pvoc_entire_buffer(pvoc,
                        orig_signal,

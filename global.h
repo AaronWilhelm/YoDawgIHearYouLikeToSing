@@ -10,6 +10,9 @@
 #define NOTE_ARRAY_LENGTH 33
 #define VOICE
 #define OV_SAMP_FACT 4
+#define DEBUG_OUTPUT
+//#define DOUBLE_PITCH
+
 
 
 struct complex_t
