@@ -21,6 +21,7 @@ struct pvoc_ps_t
     //float expct;
     double expct;
     float freq_per_bin;
+    double scale_fact;
 
     /* Vars up modified every iteration */
     float * last_phase;

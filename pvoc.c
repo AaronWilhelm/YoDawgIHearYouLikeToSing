@@ -36,6 +36,20 @@ void init_pvoc_ps(struct pvoc_ps_t * pv,
         pv->last_phase[i] = 0.0;
         pv->sum_phase[i]  = 0.0;
     }
+
+    switch( pv->over_samp_fact )
+    {
+        case 1:
+            pv->scale_fact = 6.0;
+            break;
+        case 3:
+            pv->scale_fact = 3.0;
+            break;
+        default:
+            pv->scale_fact = 2.5;
+            break;
+    }
+    
 }
 
 /************************************************
@@ -111,9 +125,7 @@ void pvoc_ps_single_buffer(struct pvoc_ps_t * pv,
 
         tmp = pv->freq_per_bin * ((float) i + tmp);
 
-
         __freq(pv->tmp_wksp[i]) = tmp;
-
     }
 
     /**********************

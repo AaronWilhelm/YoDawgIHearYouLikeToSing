@@ -122,10 +122,14 @@ int main()
         }
 
         // Write output
-        out_idx = latest_idx - 2*pvoc.frame_size + pvoc.step_size;
+        out_idx = latest_idx - pvoc.frame_size;
 
         if( out_idx < 0 )
             out_idx += input_c_buff.size;
+
+        // XXX: This scaling factor should be something a bit more robust
+        out_c_buff[out_idx] /= 3.0;
+
 
         write_audio_buffer_float(&a_output, out_c_buff + out_idx, 1);
 
