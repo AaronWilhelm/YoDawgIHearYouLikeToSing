@@ -1,4 +1,5 @@
 #include "pvoc.h"
+#include "audio.h"
 #include <string.h>
 #include <math.h>
 
@@ -83,6 +84,8 @@ void pvoc_ps_single_buffer(struct pvoc_ps_t * pv,
     }
 
     fft_execute(pv->fft_desc, pv->tmp_wksp);
+
+    pitch_shift = find_ratio(max_peak(pv->tmp_wksp, pv->frame_size));
 
     /**************************************************
      * At this point the the real portion in pv->tmp_wksp
