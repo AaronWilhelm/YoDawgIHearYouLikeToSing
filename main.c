@@ -51,8 +51,6 @@ void dummy_pvoc(struct pvoc_ps_t *pv, float* buff2use, struct complex_t *tmp_out
 
 int main()
 {
-    int glob = 0;
-    int tmp;
     int i, samp_num;
     struct audio_in_t  a_input;
     struct audio_out_t a_output;
@@ -106,7 +104,7 @@ int main()
     }
 
     samp_num = 0;
-    /* input_c_buff.position = input_c_buff.size - pvoc.frame_size + pvoc.step_size; */
+
     input_c_buff.position = 0;
     //'Main' Processing loop
     while( push_audio_in_samp(&a_input, &input_c_buff) )
@@ -124,15 +122,12 @@ int main()
         }
 
         // Write output
-        out_idx = latest_idx - 2*pvoc.frame_size + pvoc.step_size-0;
+        out_idx = latest_idx - 2*pvoc.frame_size + pvoc.step_size;
 
         if( out_idx < 0 )
             out_idx += input_c_buff.size;
 
-printf("output: %f\n", out_c_buff[out_idx]);
-
         write_audio_buffer_float(&a_output, out_c_buff + out_idx, 1);
-
 
         if( samp_num == pvoc.step_size - 1)
         {
@@ -165,25 +160,6 @@ printf("output: %f\n", out_c_buff[out_idx]);
             }
 
             pvoc_ps_single_buffer(&pvoc, buff2use, tmp_out_buff, 1.0);
-
-for(k = 0, b_idx = begin_idx;
-    k < pvoc.frame_size && b_idx < input_c_buff.size;
-    ++k, ++b_idx)
-  {
-    printf("%f\n", out_c_buff[b_idx]);
-  }
-
-for(b_idx = 0; k < pvoc.frame_size; ++k, ++b_idx)
-  {
-    printf("%f\n", out_c_buff[b_idx]);
-  }
-
-printf("#########################################\n");
-if(glob == 10)
-{
-//  exit(2);
-}
-glob++;
 
             for(k = 0, b_idx = begin_idx;
                 k < pvoc.frame_size && b_idx < input_c_buff.size;
