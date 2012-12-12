@@ -163,7 +163,7 @@ void pvoc_ps_single_buffer(struct pvoc_ps_t * pv,
 
     for(i = 0; i < pv->frame_size; ++i)
     {
-        out_sig[i].real *= 2*pv->window[i]/
+        out_sig[i].real *= 2.0*pv->window[i]/
                            (pv->half_frame*pv->over_samp_fact);
         out_sig[i].imag = 0.0; //XXX: Should probably be removed
     }
