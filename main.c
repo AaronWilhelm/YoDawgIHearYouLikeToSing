@@ -1,5 +1,6 @@
 #ifdef FOR_PC
   #include <stdio.h>
+  #include <stdlib.h>
 #elif FOR_DSP
 
 #else
@@ -69,7 +70,7 @@ int main()
     struct c_buff_f32 input_c_buff = {
         in_c_buff_space,
         IN_CIRC_BUFF_SIZE,
-        IN_CIRC_BUFF_SIZE - 1,
+        0
     };
 
     //Initialize Sound
@@ -103,9 +104,12 @@ int main()
     }
 
     samp_num = 0;
+
+    input_c_buff.position = 0;
     //'Main' Processing loop
     while( push_audio_in_samp(&a_input, &input_c_buff) )
     {
+        int out_idx;
         int latest_idx = input_c_buff.position;
 
         if( latest_idx + 1 < input_c_buff.size )
@@ -117,14 +121,26 @@ int main()
             out_c_buff[0] = 0.0;
         }
 
+        // Write output
+        out_idx = latest_idx - pvoc.frame_size;
+
+        if( out_idx < 0 )
+            out_idx += input_c_buff.size;
+
+        // XXX: This scaling factor should be something a bit more robust
+        out_c_buff[out_idx] /= 3.0;
+
+
+        write_audio_buffer_float(&a_output, out_c_buff + out_idx, 1);
+
         if( samp_num == pvoc.step_size - 1)
         {
             float * buff2use;
             int begin_idx, k, b_idx;
-
             samp_num = 0;
             // Auto-tune time
             begin_idx = latest_idx - pvoc.frame_size + 1;
+
             if( begin_idx < 0 )
                 begin_idx += input_c_buff.size;
 
@@ -153,27 +169,18 @@ int main()
                 k < pvoc.frame_size && b_idx < input_c_buff.size;
                 ++k, ++b_idx)
             {
-                out_c_buff[b_idx] += tmp_out_buff[k].real/
-                  (2.0*(float)pvoc.over_samp_fact);
+                out_c_buff[b_idx] += tmp_out_buff[k].real;
             }
 
             for(b_idx = 0; k < pvoc.frame_size; ++k, ++b_idx)
             {
-                out_c_buff[b_idx] += tmp_out_buff[k].real/
-                  (2.0*(float)pvoc.over_samp_fact);
+                out_c_buff[b_idx] += tmp_out_buff[k].real;
             }
         }
         else
         {
            ++samp_num;
         }
-
-        latest_idx = latest_idx - pvoc.frame_size;
-
-        if( latest_idx < 0 )
-            latest_idx += input_c_buff.size;
-
-        write_audio_buffer_float(&a_output, out_c_buff + latest_idx, 1);
     }
 
     close_audio_in(&a_input);
