@@ -8,9 +8,9 @@
 #define PI 3.14159265358979323846
 #define SAMPLE_RATE 44100
 #define NOTE_ARRAY_LENGTH 33
-//#define VOICE
+#define VOICE
 #define OV_SAMP_FACT 4
-#define DEBUG_OUTPUT
+//#define DEBUG_OUTPUT
 //#define DOUBLE_PITCH
 
 

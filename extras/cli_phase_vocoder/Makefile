@@ -23,3 +23,4 @@ pvoc: $(H_FILES) $(C_FILES)
 
 clean:
 	-rm *~
+	-rm pvoc
