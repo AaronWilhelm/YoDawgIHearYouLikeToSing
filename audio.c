@@ -69,8 +69,8 @@ int write_audio_buffer_float(struct audio_out_t *out, float* buffer, int size)
 
 #ifdef FOR_DSP
 
-void close_audio_in(struct audio_in_t* in) {} // Do nothing
-void close_audio_out(struct audio_out_t* out) {} // Do nothing
+//void close_audio_in(struct audio_in_t* in) {} // Do nothing
+//void close_audio_out(struct audio_out_t* out) {} // Do nothing
 
 #endif /* FOR_DSP */
 
@@ -81,7 +81,7 @@ float max_peak(struct complex_t* fft_data, int length)
 	int i;
 	float sample;
     //printf("starting pitch detect \n");
-    fflush(stdout);
+	//fflush(stdout);
 	//assuming the fftw style data, we ignore the negative frequency area
  	//which is the second half of the fft data
 	for(i = 1; i < length/2 +1; i++)
@@ -89,7 +89,7 @@ float max_peak(struct complex_t* fft_data, int length)
         //printf("real: %f    imag: %f\n",fft_data[i].real,fft_data[i].imag);
         sample = (fft_data[i].real * fft_data[i].real) + (fft_data[i].imag * fft_data[i].imag);
         //printf("the current sample is %f\n",sample);
-        fflush(stdout);
+        //fflush(stdout);
 		if(sample > peak)
 		{
 			index = i;
@@ -97,7 +97,7 @@ float max_peak(struct complex_t* fft_data, int length)
 		}
 	}
     //printf("the index of the maximum peak is %d \n",index);
-    fflush(stdout);
+    //fflush(stdout);
 	//calculate the frequency from the index of the highest peak
    // printf("the frequency is %f    ",(float)index * (SAMPLE_RATE * (((float)(length - 2))/((float)length*(float)length))));
 #ifdef DEBUG_OUTPUT
@@ -116,7 +116,7 @@ float find_ratio(float current_freq)
     current_freq /= 7; //assuming given max peak and finding ratio for voice signals. 
 #endif    
     //printf("frequency %f \n", current_freq);
-    fflush(stdout);
+    //fflush(stdout);
     ratio.denominator = current_freq;
     while (!done)
     {
@@ -155,7 +155,7 @@ float find_ratio(float current_freq)
     printf("new frequency %f   original frequency %f  ", ratio.numerator, ratio.denominator);
     printf("ratio %f \n",(float)ratio.numerator / (float)ratio.denominator);
 #endif
-    fflush(stdout);
+    //fflush(stdout);
 #ifdef DOUBLE_PITCH
     return ((float)ratio.numerator / (float)ratio.denominator)*2;
 #else

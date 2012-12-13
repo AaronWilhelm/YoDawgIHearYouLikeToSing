@@ -3,8 +3,6 @@
 #include <string.h>
 #include <math.h>
 
-#include <stdio.h>
-
 #define M_PI 3.14159265358979323846
 
 /********************************************************************
@@ -75,7 +73,14 @@ void pvoc_ps_single_buffer(struct pvoc_ps_t * pv,
 {
     int i, qpd, index;
     double re, im, tmp, phase, mag;
-
+#if 1
+for(i = 0; i < pv->frame_size; ++i)
+{
+	out_sig[i].real = in_sig[i]/5.0;
+	out_sig[i].imag = 0.0;
+}
+return;
+#endif
     // Window data and copy to temp array
     for(i = 0; i < pv->frame_size; ++i)
     {
@@ -85,8 +90,10 @@ void pvoc_ps_single_buffer(struct pvoc_ps_t * pv,
 
     fft_execute(pv->fft_desc, pv->tmp_wksp);
 
-    pitch_shift = find_ratio(max_peak(pv->tmp_wksp, pv->frame_size));
-
+#if 1
+    //pitch_shift = find_ratio(max_peak(pv->tmp_wksp, pv->frame_size));
+    pitch_shift = 1.0;
+#endif
     /**************************************************
      * At this point the the real portion in pv->tmp_wksp
      * will hold magnitude information while the imag

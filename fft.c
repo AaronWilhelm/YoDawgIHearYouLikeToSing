@@ -67,11 +67,10 @@ void fft(struct fft_desc_t * desc, struct complex_t * data)
 void init_fft_desc(struct fft_desc_t * desc, int n, enum FFT_Direction dir)
 {
     int i;
-
-    desc->size = n;
-
 	float a = 2.0*PI/n;
     float coeff;
+    
+    desc->size = n;
 
     switch(dir)
     {

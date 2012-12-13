@@ -3,14 +3,15 @@
 
 #define arraysize(a) (sizeof(a)/sizeof(a[0]))
 
-#define IN_BUFF_SIZE 256*2
+#define IN_BUFF_SIZE 128
 #define IN_CIRC_BUFF_SIZE  1000
 #define PI 3.14159265358979323846
-#define SAMPLE_RATE 44100
+//#define SAMPLE_RATE 44100
+#define SAMPLE_RATE 8000
 #define NOTE_ARRAY_LENGTH 33
 //#define VOICE
-#define OV_SAMP_FACT 4
-#define DEBUG_OUTPUT
+#define OV_SAMP_FACT 2
+//#define DEBUG_OUTPUT
 //#define DOUBLE_PITCH
 
 

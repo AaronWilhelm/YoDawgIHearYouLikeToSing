@@ -34,9 +34,9 @@ typedef struct
 } freq_ratio;
 
 #ifdef FOR_DSP
-struct audio_in_t
-{
-};
+//struct audio_in_t
+//{
+//};
 #endif
 
 float max_peak(struct complex_t* fft_data, int length);
@@ -47,7 +47,7 @@ int downsample(float* o_data, float* n_data, int factor);
 
 int upsample_c(struct complex_t* o_data, struct complex_t* n_data, int factor);
 int downsample_c(struct complex_t* o_data, struct complex_t* n_data, int factor);
-
+/*
 void init_audio_in(struct audio_in_t*);
 void close_audio_in(struct audio_in_t*);
 
@@ -59,5 +59,5 @@ int fill_in_buffer(struct audio_in_t*, int * buffer, int size);
 
 // Returns 1 if the write went correctly
 int write_audio_buffer_float(struct audio_out_t*, float*, int size);
-
+*/
 #endif /* AUDIO_H */
